@@ -1,4 +1,6 @@
 import React from 'react';
+import { fbAuth } from './services/firebase';
+
 import logo from './logo.svg';
 import './App.css';
 
@@ -22,5 +24,13 @@ function App() {
     </div>
   );
 }
+
+fbAuth.onAuthStateChanged(user => {
+  if (user) {
+    console.log('Welcome ', user.displayName);
+  } else {
+    console.log('No user logged in.');
+  }
+});
 
 export default App;
