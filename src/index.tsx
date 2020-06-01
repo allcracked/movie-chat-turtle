@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
+import { Route, Switch, Router } from "react-router-dom";
 import { createStore } from "redux";
+import { createBrowserHistory } from "history";
 
 import { rootReducer } from "./store/index";
 
@@ -17,11 +18,12 @@ import { setLoggedUser } from "./store/loggedUser/actions";
 import { LoggedUser } from "./store/loggedUser/types";
 
 const store = createStore(rootReducer);
+export const history = createBrowserHistory();
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router>
+      <Router history={history}>
         <Switch>
           <Route exact path="/" component={Login} />
           <Route exact path="/login" component={Login} />
@@ -43,6 +45,7 @@ fbAuth.onAuthStateChanged(user => {
       uid: user.uid,
     }
     store.dispatch(setLoggedUser(loggedUser));
+    history.push('/home');
   } else {
     console.log('No user logged in.');
   }
