@@ -12,9 +12,9 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 
 import { fbAuth } from "../../services/firebase";
-import Movie from "../../data/interfaces";
 
 import MoviesData from "../../data/movies.json";
+import { TablePagination } from "@material-ui/core";
 
 const useStyles = makeStyles({
   table: {
@@ -64,14 +64,22 @@ const Home: React.FC = () => {
   const history = useHistory();
   const classes = useStyles();
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
+
   const handleLogout = (): void => {
     fbAuth.signOut();
     history.push("/");
   };
 
-  useEffect(() => {
-    console.log({ tableRows });
-  }, []);
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <div>
@@ -92,7 +100,7 @@ const Home: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableRows.map((row) => (
+            {tableRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
               <TableRow key={`${row.revenue}${row.title}`}>
                 <TableCell component="th" scope="row">
                   {row.title}
@@ -107,6 +115,15 @@ const Home: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={tableRows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
     </div>
   );
 };
