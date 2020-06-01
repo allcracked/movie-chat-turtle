@@ -3,19 +3,20 @@ import ReactDOM from "react-dom";
 import { Route, Switch, Router } from "react-router-dom";
 import { createStore } from "redux";
 import { createBrowserHistory } from "history";
+import { Provider } from "react-redux";
 
 import { rootReducer } from "./store/index";
 
 import Login from "./components/Login/Login";
 import Home from "./containers/Home/Home";
+import SecureRoute from "./components/SecureRoute/SecureRoute";
 
 import { fbAuth } from "./services/firebase";
+import { setLoggedUser } from "./store/loggedUser/actions";
+import { LoggedUser } from "./store/loggedUser/types";
 
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
-import { Provider } from "react-redux";
-import { setLoggedUser } from "./store/loggedUser/actions";
-import { LoggedUser } from "./store/loggedUser/types";
 
 const store = createStore(rootReducer);
 export const history = createBrowserHistory();
@@ -27,7 +28,7 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/" component={Login} />
           <Route exact path="/login" component={Login} />
-          <Route exact path="/home" component={Home} />
+          <SecureRoute exact path="/home" component={Home} />
         </Switch>
       </Router>
     </Provider>
