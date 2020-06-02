@@ -36,7 +36,6 @@ ReactDOM.render(
 
 fbAuth.onAuthStateChanged((user) => {
   if (user) {
-    console.log("Welcome", user.displayName);
     const loggedUser: LoggedUser = {
       name: user.displayName || "Unknown User",
       email: user.email || "unknown@user.com",
@@ -47,8 +46,6 @@ fbAuth.onAuthStateChanged((user) => {
     };
     store.dispatch(setLoggedUser(loggedUser));
     history.push("/home");
-  } else {
-    console.log("No user logged in.");
   }
 });
 
