@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Fade, makeStyles, Backdrop } from "@material-ui/core";
+import {
+  Modal,
+  makeStyles,
+  Typography,
+  Paper,
+  IconButton,
+  InputBase,
+} from "@material-ui/core";
 import { fbDb } from "../../services/firebase";
+
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import SendIcon from "@material-ui/icons/Send";
+import InfoIcon from '@material-ui/icons/Info';
 
 import Comment from "../../components/Comment/Comment";
 
@@ -30,7 +41,45 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(2, 4, 3),
+    width: 450,
+  },
+  titleHeader: {
+    display: "flex",
+    backgroundColor: "rgb(66, 79, 178)",
+    padding: "7px 10px",
+    color: "white",
+    "& h6": {
+      paddingLeft: 15,
+      fontSize: 16,
+    },
+    "& svg": {
+      cursor: "pointer",
+    },
+  },
+  commentsContainer: {
+    backgroundColor: "rgb(242, 242, 242)",
+    padding: 10,
+  },
+  root: {
+    padding: "2px 4px",
+    display: "flex",
+    alignItems: "center",
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  notFoundWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    color: "#777",
+    margin: "10px 0px",
+    "& p": {
+      margin: 2,
+    },
   },
 }));
 
@@ -76,12 +125,29 @@ const CommentsList: React.FC<CommentsListProps> = (
       onClose={handleClose}
     >
       <div className={classes.paper}>
-        <p id="transition-modal-description">{movieTitle}</p>
-        <div>
-          {comments.map((comment) => (
-            <Comment key={comment.timestamp} commentData={comment} />
-          ))}
+        <div className={classes.titleHeader}>
+          <ArrowBackIcon onClick={handleClose} />
+          <Typography variant="subtitle1">{movieTitle} Comments</Typography>
         </div>
+        <div className={classes.commentsContainer}>
+          {comments.length > 0 ? comments.map((comment) => (
+            <Comment key={comment.timestamp} commentData={comment} />
+          )) : <div className={classes.notFoundWrapper}><InfoIcon /><p>No comments found</p></div>}
+        </div>
+        <Paper component="form" className={classes.root}>
+          <InputBase
+            className={classes.input}
+            placeholder="Add your comment"
+            inputProps={{ "aria-label": "add your comment" }}
+          />
+          <IconButton
+            color="primary"
+            className={classes.iconButton}
+            aria-label="directions"
+          >
+            <SendIcon />
+          </IconButton>
+        </Paper>
       </div>
     </Modal>
   );
