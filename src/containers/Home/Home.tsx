@@ -142,6 +142,7 @@ const Home: React.FC = () => {
 
   const [open, setOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState("");
+  const [selectedMovieTitle, setSelectedMovieTitle] = useState("");
 
   const handleClose = (): void => {
     setOpen(false);
@@ -151,6 +152,7 @@ const Home: React.FC = () => {
     const clickedMovie = movieData as TableMovieData;
     const movieId = clickedMovie.title.toLowerCase().replace(/[\s/:?!-'".,]/g, "_") + "_" + clickedMovie.year;
     setSelectedMovie(movieId);
+    setSelectedMovieTitle(clickedMovie.title);
     setOpen(true);
   };
 
@@ -215,7 +217,7 @@ const Home: React.FC = () => {
         />
       </Container>
 
-      <CommentsList open={open} handleClose={handleClose} movieId={selectedMovie} />
+      <CommentsList open={open} handleClose={handleClose} movieId={selectedMovie} movieTitle={selectedMovieTitle} />
     </div>
   );
 };
