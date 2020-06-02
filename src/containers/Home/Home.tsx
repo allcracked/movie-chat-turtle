@@ -2,7 +2,18 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import MaterialTable, { Column } from "material-table";
 import Moment from "moment";
+import { useSelector } from "react-redux";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  makeStyles,
+  Avatar,
+  Container,
+} from "@material-ui/core";
 
+import { RootState } from "../../store";
 import { fbAuth } from "../../services/firebase";
 
 import MoviesData from "../../data/movies.json";
@@ -96,8 +107,38 @@ const tableColumns: Column<TableMovieData>[] = [
   },
 ];
 
+const useStyles = makeStyles((theme) => ({
+  "@global": {
+    ul: {
+      margin: 0,
+      padding: 0,
+      listStyle: "none",
+    },
+  },
+  appBar: {
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  toolbar: {
+    flexWrap: "wrap",
+  },
+  toolbarTitle: {
+    flexGrow: 1,
+  },
+  link: {
+    margin: theme.spacing(1, 1.5),
+  },
+  userName: {
+    paddingLeft: 10,
+  },
+  userPhoto: {
+    border: "1px solid #ccc",
+  },
+}));
+
 const Home: React.FC = () => {
   const history = useHistory();
+  const classes = useStyles();
+  const user = useSelector((state: RootState) => state.loggedUser.user);
 
   const handleLogout = (): void => {
     fbAuth.signOut();
@@ -106,17 +147,52 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <p>This is home</p>
-      <p>{tableRows.length} movies in the database</p>
-      <p>{movieGenres}</p>
-      <button onClick={handleLogout}>Logout</button>
-
-      <MaterialTable
-        title="Movies Information"
-        columns={tableColumns}
-        data={tableRows}
-        options={{ filtering: true, search: false }}
-      />
+      <AppBar
+        position="static"
+        color="default"
+        elevation={0}
+        className={classes.appBar}
+      >
+        <Toolbar className={classes.toolbar}>
+          <Typography
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.toolbarTitle}
+          >
+            Movie Chat
+          </Typography>
+          <Avatar src={user.photo} className={classes.userPhoto} />
+          <Typography
+            variant="subtitle1"
+            color="inherit"
+            className={classes.userName}
+          >
+            {user.name}
+          </Typography>
+          <Button
+            color="primary"
+            variant="outlined"
+            className={classes.link}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <br/>
+      <Container maxWidth="xl">
+        <MaterialTable
+          title="Movies Information"
+          columns={tableColumns}
+          data={tableRows}
+          options={{
+            filtering: true,
+            search: false,
+            pageSize: 20,
+          }}
+        />
+      </Container>
     </div>
   );
 };
