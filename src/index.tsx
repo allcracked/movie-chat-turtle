@@ -22,33 +22,30 @@ const store = createStore(rootReducer);
 export const history = createBrowserHistory();
 
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <Router history={history}>
-        <Switch>
-          <Route exact path="/" component={Login} />
-          <Route exact path="/login" component={Login} />
-          <SecureRoute exact path="/home" component={Home} />
-        </Switch>
-      </Router>
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <Router history={history}>
+      <Switch>
+        <Route exact path="/" component={Login} />
+        <Route exact path="/login" component={Login} />
+        <SecureRoute exact path="/home" component={Home} />
+      </Switch>
+    </Router>
+  </Provider>,
   document.getElementById("root")
 );
 
-fbAuth.onAuthStateChanged(user => {
+fbAuth.onAuthStateChanged((user) => {
   if (user) {
-    console.log('Welcome', user.displayName);
     const loggedUser: LoggedUser = {
-      name: user.displayName || 'Unknown User',
-      email: user.email || 'unknown@user.com',
-      photo: user.photoURL || 'https://ssl.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png',
+      name: user.displayName || "Unknown User",
+      email: user.email || "unknown@user.com",
+      photo:
+        user.photoURL ||
+        "https://ssl.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png",
       uid: user.uid,
-    }
+    };
     store.dispatch(setLoggedUser(loggedUser));
-    history.push('/home');
-  } else {
-    console.log('No user logged in.');
+    history.push("/home");
   }
 });
 
