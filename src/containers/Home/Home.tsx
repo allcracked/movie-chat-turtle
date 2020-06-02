@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import MaterialTable, { Column } from "material-table";
 import Moment from "moment";
@@ -17,6 +17,7 @@ import { RootState } from "../../store";
 import { fbAuth } from "../../services/firebase";
 
 import MoviesData from "../../data/movies.json";
+import CommentsList from "../CommentsList/CommentsList";
 
 interface TableMovieData {
   title: string;
@@ -139,6 +140,20 @@ const Home: React.FC = () => {
   const classes = useStyles();
   const user = useSelector((state: RootState) => state.loggedUser.user);
 
+  const [open, setOpen] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState("");
+
+  const handleClose = (): void => {
+    setOpen(false);
+  };
+
+  const handleOpenMovieComments = (movieData: TableMovieData | TableMovieData[]) => {
+    const clickedMovie = movieData as TableMovieData;
+    const movieId = clickedMovie.title.toLowerCase().replace(/[\s/:?!-'".,]/g, "_") + "_" + clickedMovie.year;
+    setSelectedMovie(movieId);
+    setOpen(true);
+  };
+
   const handleLogout = (): void => {
     fbAuth.signOut();
     history.push("/");
@@ -185,6 +200,13 @@ const Home: React.FC = () => {
           title="Movies Information"
           columns={tableColumns}
           data={tableRows}
+          actions={[
+            {
+              icon: 'comment',
+              tooltip: 'View Comments',
+              onClick: (event, rowData) => handleOpenMovieComments(rowData),
+            },
+          ]}
           options={{
             filtering: true,
             search: false,
@@ -192,6 +214,8 @@ const Home: React.FC = () => {
           }}
         />
       </Container>
+
+      <CommentsList open={open} handleClose={handleClose} movieId={selectedMovie} />
     </div>
   );
 };
