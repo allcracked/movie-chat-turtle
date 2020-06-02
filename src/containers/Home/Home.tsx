@@ -103,7 +103,6 @@ const tableColumns: Column<TableMovieData>[] = [
       rowData.genres.map((genre, index) =>
         rowData.genres.length - 1 !== index ? `${genre}, ` : genre
       ),
-    customFilterAndSearch: (term, rowData) => rowData.genres.includes(term),
   },
 ];
 
@@ -180,7 +179,7 @@ const Home: React.FC = () => {
           </Button>
         </Toolbar>
       </AppBar>
-      <br/>
+      <br />
       <Container maxWidth="xl">
         <MaterialTable
           title="Movies Information"
