@@ -11,9 +11,12 @@ import { fbDb } from "../../services/firebase";
 
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import SendIcon from "@material-ui/icons/Send";
-import InfoIcon from '@material-ui/icons/Info';
+import InfoIcon from "@material-ui/icons/Info";
 
 import Comment from "../../components/Comment/Comment";
+import { RootState } from "../../store";
+import { useSelector } from "react-redux";
+import moment from "moment";
 
 interface CommentsListProps {
   open: boolean;
@@ -60,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "rgb(242, 242, 242)",
     padding: 10,
   },
-  root: {
+  commentRoot: {
     padding: "2px 4px",
     display: "flex",
     alignItems: "center",
@@ -73,8 +76,8 @@ const useStyles = makeStyles((theme) => ({
     padding: 10,
   },
   notFoundWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
+    display: "flex",
+    justifyContent: "center",
     color: "#777",
     margin: "10px 0px",
     "& p": {
@@ -89,23 +92,53 @@ const CommentsList: React.FC<CommentsListProps> = (
   const { movieId, handleClose, open, movieTitle } = props;
   const classes = useStyles();
 
+  const user = useSelector((state: RootState) => state.loggedUser.user);
+
   const [comments, setComments] = useState<MovieComment[]>([]);
+  const [newComment, setNewComment] = useState("");
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewComment(event.currentTarget.value);
+  };
+
+  const handleKeyDownComment = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") handleSaveComment();
+  };
+
+  const handleSaveComment = () => {
+    if (newComment) {
+      const saveComment: MovieComment = {
+        comment: newComment,
+        timestamp: moment.now(),
+        user: { name: user.name, photo: user.photo },
+      };
+
+      const movieRef = fbDb.ref(`/comments/${movieId}`);
+      const commentPush = movieRef.push();
+      const commentRef = commentPush.ref;
+
+      commentRef.update({ ...saveComment });
+
+      setNewComment("");
+    }
+  };
 
   useEffect(() => {
     if (movieId) {
-      const commentRef = fbDb.ref(`/comments/${movieId}`);
+      const movieRef = fbDb.ref(`/comments/${movieId}`);
 
-      commentRef.on("value", (commentsSnap) => {
+      movieRef.on("value", (commentsSnap) => {
         if (commentsSnap.exists()) {
           const keyComments = commentsSnap.val();
           const arrayComments = Object.entries(keyComments);
           const comments = arrayComments.map(
             (comment) => comment[1]
           ) as MovieComment[];
-          console.log({ comments });
+          comments.sort((a, b) => a.timestamp - b.timestamp);
           setComments(comments);
         } else {
-          console.log("No data at:", commentsSnap.key);
           setComments([]);
         }
       });
@@ -130,20 +163,31 @@ const CommentsList: React.FC<CommentsListProps> = (
           <Typography variant="subtitle1">{movieTitle} Comments</Typography>
         </div>
         <div className={classes.commentsContainer}>
-          {comments.length > 0 ? comments.map((comment) => (
-            <Comment key={comment.timestamp} commentData={comment} />
-          )) : <div className={classes.notFoundWrapper}><InfoIcon /><p>No comments found</p></div>}
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+              <Comment key={comment.timestamp} commentData={comment} />
+            ))
+          ) : (
+            <div className={classes.notFoundWrapper}>
+              <InfoIcon />
+              <p>No comments found</p>
+            </div>
+          )}
         </div>
-        <Paper component="form" className={classes.root}>
+        <Paper component="div" className={classes.commentRoot}>
           <InputBase
             className={classes.input}
             placeholder="Add your comment"
             inputProps={{ "aria-label": "add your comment" }}
+            onChange={handleCommentChange}
+            onKeyDown={handleKeyDownComment}
+            value={newComment}
           />
           <IconButton
             color="primary"
             className={classes.iconButton}
             aria-label="directions"
+            onClick={handleSaveComment}
           >
             <SendIcon />
           </IconButton>
