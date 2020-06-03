@@ -147,6 +147,8 @@ const Home: React.FC = () => {
 
   const handleClose = (): void => {
     setOpen(false);
+    setSelectedMovie("");
+    setSelectedMovieTitle("");
   };
 
   const handleOpenMovieComments = (movieData: TableMovieData | TableMovieData[]) => {

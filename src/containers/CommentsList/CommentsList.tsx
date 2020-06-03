@@ -63,6 +63,8 @@ const useStyles = makeStyles((theme) => ({
   commentsContainer: {
     backgroundColor: "rgb(242, 242, 242)",
     padding: 10,
+    overflowY: "auto",
+    maxHeight: 600,
   },
   commentRoot: {
     padding: "2px 4px",
@@ -104,6 +106,7 @@ const CommentsList: React.FC<CommentsListProps> = (
   const [loading, setLoading] = useState(true);
 
   const handleLocalClose = () => {
+    fbDb.ref(`/comments/${movieId}`).off();
     handleClose();
   }
 
