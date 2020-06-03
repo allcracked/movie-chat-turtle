@@ -12,6 +12,7 @@ import { fbDb } from "../../services/firebase";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import SendIcon from "@material-ui/icons/Send";
 import InfoIcon from "@material-ui/icons/Info";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Comment from "../../components/Comment/Comment";
 import { RootState } from "../../store";
@@ -84,6 +85,10 @@ const useStyles = makeStyles((theme) => ({
       margin: 2,
     },
   },
+  loadingIcon: {
+    margin: "0px auto",
+    textAlign: "center",
+  },
 }));
 
 const CommentsList: React.FC<CommentsListProps> = (
@@ -96,15 +101,14 @@ const CommentsList: React.FC<CommentsListProps> = (
 
   const [comments, setComments] = useState<MovieComment[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const handleLocalClose = () => {
+    handleClose();
+  }
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewComment(event.currentTarget.value);
-  };
-
-  const handleKeyDownComment = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (event.key === "Enter") handleSaveComment();
   };
 
   const handleSaveComment = () => {
@@ -125,28 +129,36 @@ const CommentsList: React.FC<CommentsListProps> = (
     }
   };
 
+  const handleKeyDownComment = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") handleSaveComment();
+  };
+
   useEffect(() => {
     if (movieId) {
+      setLoading(true);
       const movieRef = fbDb.ref(`/comments/${movieId}`);
 
       movieRef.on("value", (commentsSnap) => {
         if (commentsSnap.exists()) {
           const keyComments = commentsSnap.val();
           const arrayComments = Object.entries(keyComments);
+
           const comments = arrayComments.map(
             (comment) => comment[1]
           ) as MovieComment[];
+
           comments.sort((a, b) => a.timestamp - b.timestamp);
+
           setComments(comments);
         } else {
           setComments([]);
         }
+
+        setLoading(false);
       });
     }
-
-    return function cleanup() {
-      if (movieId) fbDb.ref(`/comments/${movieId}`).off();
-    };
   }, [movieId]);
 
   return (
@@ -155,15 +167,17 @@ const CommentsList: React.FC<CommentsListProps> = (
       aria-describedby="spring-modal-description"
       className={classes.modal}
       open={open}
-      onClose={handleClose}
+      onClose={handleLocalClose}
     >
       <div className={classes.paper}>
         <div className={classes.titleHeader}>
-          <ArrowBackIcon onClick={handleClose} />
+          <ArrowBackIcon onClick={handleLocalClose} />
           <Typography variant="subtitle1">{movieTitle} Comments</Typography>
         </div>
         <div className={classes.commentsContainer}>
-          {comments.length > 0 ? (
+          {loading ? (
+            <div className={classes.loadingIcon}><CircularProgress /></div>
+          ) : comments.length > 0 ? (
             comments.map((comment) => (
               <Comment key={comment.timestamp} commentData={comment} />
             ))
