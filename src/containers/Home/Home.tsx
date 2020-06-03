@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import MaterialTable, { Column } from "material-table";
 import Moment from "moment";
 import { useSelector } from "react-redux";
+
 import {
   AppBar,
   Toolbar,
@@ -133,6 +134,10 @@ const useStyles = makeStyles((theme) => ({
   userPhoto: {
     border: "1px solid #ccc",
   },
+  footerContainer: {
+    margin: "15px auto",
+    color: "#777",
+  },
 }));
 
 const Home: React.FC = () => {
@@ -146,6 +151,8 @@ const Home: React.FC = () => {
 
   const handleClose = (): void => {
     setOpen(false);
+    setSelectedMovie("");
+    setSelectedMovieTitle("");
   };
 
   const handleOpenMovieComments = (movieData: TableMovieData | TableMovieData[]) => {
@@ -215,6 +222,10 @@ const Home: React.FC = () => {
             pageSize: 20,
           }}
         />
+      </Container>
+
+      <Container maxWidth="xl" className={classes.footerContainer}>
+        <Typography variant="subtitle1">Developed by Jose Avilez for Turtle</Typography>
       </Container>
 
       <CommentsList open={open} handleClose={handleClose} movieId={selectedMovie} movieTitle={selectedMovieTitle} />

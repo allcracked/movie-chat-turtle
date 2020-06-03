@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import moment from "moment";
 import {
   Modal,
   makeStyles,
@@ -7,17 +9,15 @@ import {
   IconButton,
   InputBase,
 } from "@material-ui/core";
-import { fbDb } from "../../services/firebase";
 
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import SendIcon from "@material-ui/icons/Send";
 import InfoIcon from "@material-ui/icons/Info";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-import Comment from "../../components/Comment/Comment";
 import { RootState } from "../../store";
-import { useSelector } from "react-redux";
-import moment from "moment";
+import { fbDb } from "../../services/firebase";
+import Comment from "../../components/Comment/Comment";
 
 interface CommentsListProps {
   open: boolean;
@@ -63,6 +63,8 @@ const useStyles = makeStyles((theme) => ({
   commentsContainer: {
     backgroundColor: "rgb(242, 242, 242)",
     padding: 10,
+    overflowY: "auto",
+    maxHeight: 700,
   },
   commentRoot: {
     padding: "2px 4px",
@@ -104,6 +106,7 @@ const CommentsList: React.FC<CommentsListProps> = (
   const [loading, setLoading] = useState(true);
 
   const handleLocalClose = () => {
+    fbDb.ref(`/comments/${movieId}`).off();
     handleClose();
   }
 

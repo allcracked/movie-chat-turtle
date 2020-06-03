@@ -1,8 +1,9 @@
 import React from "react";
 import firebase from "firebase/app";
 
-import { fbAuth } from "../../services/firebase";
 import { Container, Button, Link, makeStyles } from "@material-ui/core";
+
+import { fbAuth } from "../../services/firebase";
 
 const useStyles = makeStyles((theme) => ({
   loginContainer: {
