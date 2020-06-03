@@ -135,7 +135,7 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid #ccc",
   },
   footerContainer: {
-    margin: "15px 0px",
+    margin: "15px auto",
     color: "#777",
   },
 }));
