@@ -1,6 +1,8 @@
 import React from "react";
-import { MovieComment } from "../../containers/CommentsList/CommentsList";
+
 import { Avatar, makeStyles } from "@material-ui/core";
+
+import { MovieComment } from "../../containers/CommentsList/CommentsList";
 
 interface CommentProps {
   commentData: MovieComment;
