@@ -4,16 +4,20 @@ Live version available at: [TODO]
 ## How to run the code
 
 The project is created using CRA.
-You'll need the .env.development.local file I shared with you in the project description in order to make this work correctly.
+You'll need the `.env.development.local` file I shared with you in the project description in order to make this work correctly.
 
 So first just install all packages needed:
+
 `
 npm install
 `
+
 Then start the project, it will automatically try to use port 3000:
+
 `
 npm start
 `
+
 
 ## Architecture Explanation
 I chose Typescript over JavaScript for this project due to the typing benefits it brings, even though this is a very small project.
