@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "rgb(242, 242, 242)",
     padding: 10,
     overflowY: "auto",
-    maxHeight: 600,
+    maxHeight: 700,
   },
   commentRoot: {
     padding: "2px 4px",

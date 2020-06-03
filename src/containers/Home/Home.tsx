@@ -134,6 +134,10 @@ const useStyles = makeStyles((theme) => ({
   userPhoto: {
     border: "1px solid #ccc",
   },
+  footerContainer: {
+    margin: "15px 0px",
+    color: "#777",
+  },
 }));
 
 const Home: React.FC = () => {
@@ -218,6 +222,10 @@ const Home: React.FC = () => {
             pageSize: 20,
           }}
         />
+      </Container>
+
+      <Container maxWidth="xl" className={classes.footerContainer}>
+        <Typography variant="subtitle1">Developed by Jose Avilez for Turtle</Typography>
       </Container>
 
       <CommentsList open={open} handleClose={handleClose} movieId={selectedMovie} movieTitle={selectedMovieTitle} />
